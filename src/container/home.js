@@ -6,20 +6,25 @@ import '../static/css/home.css';
 import {add_link_item, get_home_line, show_login_page} from '../store/action/Home'
 
 class home extends Component {
-  // constructor(props){
-  //   super(props);
-  // }
+  constructor(props){
+    super(props);
+    this.state = {
+      personal: []
+    }
+  };
   change = () => {
 	  console.log(2);
-	  this.props.dispatch(get_home_line({info : '改变'}))
-    this.props.dispatch(add_link_item())
+	  this.props.dispatch(get_home_line({info : '改变'}));
+    this.props.dispatch(add_link_item());
     this.props.dispatch(show_login_page())
   };
   componentDidMount() {
-   fetch('https://tingapi.ting.baidu.com/v1/restserver/ting?method=baidu.ting.billboard.billList&type=2&size=10&offset=0')
+   fetch('http://www.hw.com:8081/api/personal_recommend')
       .then((response) => response.json())
-      .then((json) => {
-        // this.backMethod(json)
+      .then((data) => {
+        this.setState({
+          personal : data.data.list
+        })
       })
       .catch(err => {
         console.log(err)
@@ -38,13 +43,19 @@ class home extends Component {
           To get started, edit <code>src/home.js</code> and save to reload.
         </p>
         <p>{this.props.HomeReducer.text}</p>
+        <ul>
+          {
+            this.state.personal.map(function(item){
+              return <li key={item.id}>{item.title}</li>
+            })
+          }
+        </ul>
       </div>
     );
   }
 }
 
 const mapStateToProps = (state) => {
-  console.log(state);
 	return { HomeReducer: state.HomeReducer }
 };
 
